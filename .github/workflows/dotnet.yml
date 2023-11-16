@@ -33,23 +33,7 @@ jobs:
       run: dotnet build --no-restore -c Release --version-suffix ${{ env.SHORT_COMMIT_SHA }}
     
     - name: Test
-      run: dotnet test --no-build -c Release --verbosity normal --logger "trx;LogFileName=TestResults-${{ env.SHORT_COMMIT_SHA }}.trx" --results-directory TestResults --collect:"XPlat Code Coverage"
-      
-    - name: Upload Test Results Artifact
-      uses: actions/upload-artifact@v3
-      if: success() || failure()
-      with:
-        name: test-results
-        path: TestResults\*.trx
-        
-    - name: Create Test Report
-      uses: dorny/test-reporter@v1
-      if: success() || failure()
-      with:
-        artifact: test-results
-        name: TRX Tests
-        path: '**\*.trx'
-        reporter: dotnet-trx
+      run: dotnet test --no-build -c Release --verbosity normal
     
     - name: Publish
       if: success()
@@ -59,7 +43,7 @@ jobs:
       uses: vimtor/action-zip@v1.1
       with:
         files: publish\
-        dest: publish\HPH-ParkRun-Champs-${{ env.SHORT_COMMIT_SHA }}.zip
+        dest: HPH-ParkRun-Champs-${{ env.SHORT_COMMIT_SHA }}.zip
       if: success()
     
     - name: Create Release
@@ -69,4 +53,11 @@ jobs:
         name: 1.0.0-${{ env.SHORT_COMMIT_SHA }}
         makeLatest: true
         tag: ${{ env.SHORT_COMMIT_SHA }}
-        artifacts: ${{ github.workspace }}\publish\HPH-ParkRun-Champs-${{ env.SHORT_COMMIT_SHA }}.zip
+        artifacts: ${{ github.workspace }}\HPH-ParkRun-Champs-${{ env.SHORT_COMMIT_SHA }}.zip
+        
+    - name: Upload Released Assets
+      uses: actions/upload-artifact@v3
+      if: success()
+      with:
+      name: HPH-ParkRun-Champs-${{ env.SHORT_COMMIT_SHA }}
+      path: ${{ github.workspace }}\publish\*
