@@ -37,16 +37,18 @@ jobs:
       
     - name: Upload Test Results Artifact
       uses: actions/upload-artifact@v3
+      if: success() || failure()
       with:
         name: test-results
         path: TestResults\*.trx
         
     - name: Create Test Report
       uses: dorny/test-reporter@v1
+      if: success() || failure()
       with:
         artifact: test-results
         name: TRX Tests
-        path: TestResults\*.trx
+        path: '**\*.trx'
         reporter: dotnet-trx
     
     - name: Publish
