@@ -11,18 +11,46 @@ on:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v3
+    
+    - name: Set Short Commit SHA env
+      run: |
+        $shortSha = git rev-parse --short ${{ github.sha }}
+        Add-Content -Path $env:GITHUB_ENV -Value "SHORT_COMMIT_SHA=$shortSha"    
+    
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.x
+    
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore -r win-x64
+    
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore -c Release --version-suffix ${{ env.SHORT_COMMIT_SHA }}
+    
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build -c Release --verbosity normal
+    
+    - name: Publish
+      if: success()
+      run: dotnet publish .\src\HPH.ParkRunChamps.Cli\ --no-build -r win-x64 --self-contained true -c Release --version-suffix ${{ env.SHORT_COMMIT_SHA }} -o ${{ github.workspace }}\publish
+
+    - name: Zip artifacts
+      uses: vimtor/action-zip@v1.1
+      with:
+        files: publish\
+        dest: publish\HPH-ParkRun-Champs-${{ env.SHORT_COMMIT_SHA }}.zip
+      if: success()
+    
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      if: success()
+      with:
+        name: 1.0.0-${{ env.SHORT_COMMIT_SHA }}
+        makeLatest: true
+        tag: ${{ env.SHORT_COMMIT_SHA }}
+        artifacts: ${{ github.workspace }}\publish\HPH-ParkRun-Champs-${{ env.SHORT_COMMIT_SHA }}.zip
