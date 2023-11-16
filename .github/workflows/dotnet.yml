@@ -35,11 +35,19 @@ jobs:
     - name: Test
       run: dotnet test --no-build -c Release --verbosity normal --logger "trx;LogFileName=TestResults-${{ env.SHORT_COMMIT_SHA }}.trx" --results-directory TestResults --collect:"XPlat Code Coverage"
       
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v2
+    - name: Upload Test Results Artifact
+      uses: actions/upload-artifact@v3
       with:
-        name: Test Results
+        name: test-results
         path: TestResults\*.trx
+        
+    - name: Create Test Report
+      uses: dorny/test-reporter@v1
+      with:
+        artifact: test-results
+        name: TRX Tests
+        path: '*.trx'
+        reporter: dotnet-trx
     
     - name: Publish
       if: success()
