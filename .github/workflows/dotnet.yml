@@ -34,6 +34,14 @@ jobs:
     
     - name: Test
       run: dotnet test --no-build -c Release --verbosity normal
+      
+    - name: Upload Test Results
+      if: failure()
+      uses: actions/upload-artifact@v2
+      with:
+        name: verify-test-results
+        path: |
+          **/*.received.*
     
     - name: Publish
       if: success()

@@ -3,15 +3,17 @@ using Shouldly;
 
 namespace HPH.ParkRunChamps.Cli.Tests;
 
+[UsesVerify]
 public class HelloWorldTest {
     [Fact]
-    public void should_output_hello_world()
+    public Task should_output_hello_world()
     {
         var testConsole = new TestConsole();
         new HelloWorldCommand(testConsole).Execute();
+
+        var output = testConsole.Output
+            .NormalizeLineEndings();
         
-        testConsole.Output
-            .NormalizeLineEndings()
-            .ShouldBe("Hello World!");
+        return Verify(output);
     }
 }
