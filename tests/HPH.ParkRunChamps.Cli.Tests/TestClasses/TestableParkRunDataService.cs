@@ -1,8 +1,17 @@
-﻿namespace HPH.ParkRunChamps.Cli.Tests.TestClasses; 
+﻿using HPH.ParkRunChamps.Cli.Pipeline;
 
-public class TestableParkRunDataService : IParkRunDataService {
-    public Task<DateTime> GetLatestParkRunDate()
+namespace HPH.ParkRunChamps.Cli.Tests.TestClasses; 
+
+public class TestableHphBlogScraper : IHphBlogScraper {
+    public Task<IDictionary<string, IEnumerable<ParkRunResult>>> GetParkRunResults(Uri resultsLink)
     {
-        return Task.FromResult(new DateTime(1985, 10, 26));
+        throw new NotImplementedException();
+    }
+
+    public Task<(DateOnly date, Uri link)> GetLatestParkRunInfo()
+    {
+        var dateTime = new DateOnly(1985, 10, 26);
+        var linkToResults = new Uri("https://example.com");
+        return Task.FromResult((dateTime, linkToResults));
     }
 }

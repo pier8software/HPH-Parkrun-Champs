@@ -1,13 +1,21 @@
 ﻿using HPH.ParkRunChamps.Cli;
-using Microsoft.Extensions.DependencyInjection;
+using HPH.ParkRunChamps.Cli.Pipeline;
 using Spectre.Console;
 
-var services = new ServiceCollection();
-services.AddSingleton(AnsiConsole.Console);
-services.AddSingleton<GenerateParkRunResultCommand>();
-services.AddSingleton<IParkRunDataService, ParkRunDataService>();
+AnsiConsole.Console.Write(
+    new FigletText("HPH PARKRUN CHAMPS")
+        .LeftJustified()
+        .Color(Color.Red));
 
-var provider = services.BuildServiceProvider();
-var command = provider.GetRequiredService<GenerateParkRunResultCommand>();
+var parkRunChampsData = new ParkRunChampsData();
+var parkRunChampsPipeline = new ParkRunChampsPipeline();
 
-await command.Execute();
+parkRunChampsPipeline.AddStep(new GetLatestParkRunInfoStep(new HphBlogScraper()));
+parkRunChampsPipeline.AddStep(new GetResultsStep(new HphBlogScraper()));
+
+await AnsiConsole.Console.Status()
+    .Spinner(Spinner.Known.Dots)
+    .StartAsync("Updating ParkRun Champs...", async ctx =>
+    {
+        await parkRunChampsPipeline.Execute(parkRunChampsData, AnsiConsole.Console, ctx);
+    });

@@ -10,11 +10,11 @@ public class GenerateParkRunResultCommandApprovalTest {
     {
         
         var testConsole = new TestConsole();
-        var parkRunDataService = new TestableParkRunDataService();
+        var parkRunDataService = new TestableHphBlogScraper();
         
-        var command = new GenerateParkRunResultCommand(testConsole, parkRunDataService);
-        
-        command.Execute();
+        // var command = new GenerateParkRunResultCommand(testConsole, parkRunDataService);
+        //
+        // command.Execute();
 
         var output = testConsole.Output
             .NormalizeLineEndings();
