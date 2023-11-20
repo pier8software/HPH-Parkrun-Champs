@@ -11,6 +11,6 @@ public class GetLatestParkRunInfoStep(IHphBlogScraper scraper) : IPipelineStep {
         data.LastParkRunDate = date;
         data.ResultsLink = link;
         
-        console.MarkupLine($"[green]Latest Published ParkRun Results Date: [bold]{date:d}[/][/]");
+        console.MarkupLine($"[green]Latest Published ParkRun Results Date: [bold]{date:dd/MM/yyyy}[/][/]");
     }
 }
