@@ -8,6 +8,6 @@ public class GetResultsStep(IHphBlogScraper scraper) : IPipelineStep {
         ctx.Status("Fetching Results...");
         var results = await scraper.GetParkRunResults(data.ResultsLink);
         data.Results = results;
-        console.MarkupLineInterpolated($"[green]Received Results for: [bold]{results.Values.Count}[/] Park Runners[/]");
+        console.MarkupLineInterpolated($"[green]Received Results for [bold]{results.Values.SelectMany(x => x).Count()}[/] Park Runners[/]");
     }
 }
