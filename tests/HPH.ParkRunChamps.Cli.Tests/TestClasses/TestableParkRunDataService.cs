@@ -3,9 +3,14 @@
 namespace HPH.ParkRunChamps.Cli.Tests.TestClasses; 
 
 public class TestableHphBlogScraper : IHphBlogScraper {
-    public Task<IDictionary<string, IEnumerable<ParkRunResult>>> GetParkRunResults(Uri resultsLink)
+    public Task<Dictionary<string, IEnumerable<ParkRunResult>>> GetParkRunResults(Uri resultsLink)
     {
-        throw new NotImplementedException();
+        var results = new Dictionary<string, IEnumerable<ParkRunResult>>
+        {
+            ["Women"] = new List<ParkRunResult>(),
+            ["Men"] = new List<ParkRunResult>()
+        };
+        return Task.FromResult(results);
     }
 
     public Task<(DateOnly date, Uri link)> GetLatestParkRunInfo()

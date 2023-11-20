@@ -5,12 +5,17 @@ namespace HPH.ParkRunChamps.Cli.Pipeline;
 public class ParkRunChampsPipeline {
     private readonly IList<IPipelineStep> _pipelineSteps = new List<IPipelineStep>();
 
-    public async Task Execute(ParkRunChampsData data, IAnsiConsole console, StatusContext ctx)
+    public async Task Execute(ParkRunChampsData data, IAnsiConsole console)
     {
-        foreach (var step in _pipelineSteps)
-        {
-            await step.ExecuteStep(data, console, ctx);
-        }
+        await console.Status()
+            .Spinner(Spinner.Known.Dots)
+            .StartAsync("Updating ParkRun Champs...", async ctx =>
+            {
+                foreach (var step in _pipelineSteps)
+                {
+                    await step.ExecuteStep(data, console, ctx);
+                }
+            });
     }
 
     public void AddStep(IPipelineStep step)

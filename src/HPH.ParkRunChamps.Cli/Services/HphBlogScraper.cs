@@ -7,7 +7,7 @@ namespace HPH.ParkRunChamps.Cli;
 
 public interface IHphBlogScraper {
     Task<(DateOnly date, Uri link)> GetLatestParkRunInfo();
-    Task<IDictionary<string, IEnumerable<ParkRunResult>>> GetParkRunResults(Uri resultsLink);
+    Task<Dictionary<string, IEnumerable<ParkRunResult>>> GetParkRunResults(Uri resultsLink);
 }
 
 public class HphBlogScraper : IHphBlogScraper {
@@ -30,7 +30,7 @@ public class HphBlogScraper : IHphBlogScraper {
         return (parsedDate,new Uri(link));
     }
 
-    public async Task<IDictionary<string, IEnumerable<ParkRunResult>>> GetParkRunResults(Uri resultsLink)
+    public async Task<Dictionary<string, IEnumerable<ParkRunResult>>> GetParkRunResults(Uri resultsLink)
     {
         var resultsPage = await context.OpenAsync(resultsLink.AbsoluteUri);
         var tables = resultsPage.QuerySelectorAll("figure table");
