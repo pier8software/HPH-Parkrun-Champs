@@ -9,6 +9,6 @@ internal class GetMembersStep(GoogleSheetAdapter googleSheetsAdapter) : IPipelin
     {
         ctx.Status("Getting Club Members...");
         data.Members = await googleSheetsAdapter.GetMembersList();
-        console.MarkupLine($"[green][bold]{data.Members.Count()}[/] Members Loaded...[/]");
+        console.MarkupLine($"[green][bold]{data.Members.Count()}[/] Members Loaded[/]");
     }
 }

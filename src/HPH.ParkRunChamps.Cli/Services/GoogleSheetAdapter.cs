@@ -9,7 +9,7 @@ public class GoogleSheetAdapter {
     public async Task<IEnumerable<ClubMember>> GetMembersList()
     {
         using var service = await GetSheetsService();
-        var batchGet = service.Spreadsheets.Values.Get("1G3iQNkVYrtL36UnHYiZFeLpdtmzcTioJGkdvymXSYY0", "A:B");
+        var batchGet = service.Spreadsheets.Values.Get("1G3iQNkVYrtL36UnHYiZFeLpdtmzcTioJGkdvymXSYY0", "A:E");
         var data = await batchGet.ExecuteAsync();
         return data.Values.Select(row => new ClubMember(row[0].ToString(), row[1].ToString(), row[3].ToString()));
     }

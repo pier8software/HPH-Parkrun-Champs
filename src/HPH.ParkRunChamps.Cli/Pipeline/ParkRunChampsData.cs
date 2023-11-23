@@ -7,6 +7,7 @@ public class ParkRunChampsData
     public IDictionary<string, IEnumerable<ParkRunResult>> Results { get; set; }
     
     public IEnumerable<ClubMember> Members { get; set; }
+    public Dictionary<string, IEnumerable<ParkRunResult>> MembersOnlyResults { get; set; }
 }
 
 public record ParkRunResult(string Name, string ParkRun, string AgeGrade);
