@@ -7,6 +7,8 @@ internal class UpdateResultsStep : IPipelineStep {
         IAnsiConsole console,
         StatusContext ctx)
     {
-        throw new NotImplementedException();
+        // 1pbyEGcux3ResvlU4bXG5zuF39sZ0mOhJmD2e48Jp3pc
+        console.WriteLine("Not Implemented");
+        return Task.CompletedTask;
     }
 }

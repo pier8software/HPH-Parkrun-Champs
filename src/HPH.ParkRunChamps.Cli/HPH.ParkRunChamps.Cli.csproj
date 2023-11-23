@@ -13,8 +13,15 @@
 
     <ItemGroup>
       <PackageReference Include="AngleSharp" Version="1.0.7" />
+      <PackageReference Include="Google.Apis.Sheets.v4" Version="1.64.0.3148" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
       <PackageReference Include="Spectre.Console" Version="0.47.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="client_secrets.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
