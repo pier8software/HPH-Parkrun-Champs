@@ -12,10 +12,15 @@ public class HphParkRunChampsApprovalTest {
     {
         var testConsole = new TestConsole();
         var scraper = new TestableHphBlogScraper();
+        var spreadSheetAdapter = new TestableSpreadSheetAdapter();
 
         var pipeline = new ParkRunChampsPipeline();
         pipeline.AddStep(new GetLatestParkRunInfoStep(scraper));
         pipeline.AddStep(new GetResultsStep(scraper));
+        pipeline.AddStep(new GetMembersStep(spreadSheetAdapter));
+        pipeline.AddStep(new GetParkRunOfTheMonthStep(spreadSheetAdapter));
+        pipeline.AddStep(new GetClubChampsResultsStep(spreadSheetAdapter));
+        pipeline.AddStep(new UpdateClubChampsStep(spreadSheetAdapter));
 
         pipeline.Execute(new ParkRunChampsData(), testConsole);
 

@@ -3,7 +3,7 @@ using Spectre.Console;
 
 namespace HPH.ParkRunChamps.Cli.Pipeline.Steps; 
 
-public class GetParkRunOfTheMonthStep(HphSpreadSheetAdapter hphSpreadSheetsAdapter) : IPipelineStep {
+public class GetParkRunOfTheMonthStep(IHphSpreadSheetAdapter hphSpreadSheetsAdapter) : IPipelineStep {
     public async Task ExecuteStep(ParkRunChampsData data, IAnsiConsole console, StatusContext ctx)
     {
         ctx.Status("Getting ParkRun of the Month...");

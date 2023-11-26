@@ -3,7 +3,7 @@ using Spectre.Console;
 
 namespace HPH.ParkRunChamps.Cli.Pipeline.Steps;
 
-internal class UpdateClubChampsStep(HphSpreadSheetAdapter hphSpreadSheetsAdapter) : IPipelineStep {
+public class UpdateClubChampsStep(IHphSpreadSheetAdapter hphSpreadSheetsAdapter) : IPipelineStep {
     private const string WHM = "Woodhouse Moor";
 
     public async Task ExecuteStep(ParkRunChampsData data,

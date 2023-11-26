@@ -3,7 +3,7 @@ using Spectre.Console;
 
 namespace HPH.ParkRunChamps.Cli.Pipeline.Steps;
 
-internal class GetMembersStep(HphSpreadSheetAdapter hphSpreadSheetsAdapter) : IPipelineStep {
+public class GetMembersStep(IHphSpreadSheetAdapter hphSpreadSheetsAdapter) : IPipelineStep {
     public async Task ExecuteStep(ParkRunChampsData data,
         IAnsiConsole console,
         StatusContext ctx)

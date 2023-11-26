@@ -3,7 +3,7 @@ using Spectre.Console;
 
 namespace HPH.ParkRunChamps.Cli.Pipeline;
 
-public class ParkRunChampsPipeline {
+public class ParkRunChampsPipeline{
     private readonly IList<IPipelineStep> _pipelineSteps = new List<IPipelineStep>();
 
     public async Task Execute(ParkRunChampsData data, IAnsiConsole console)

@@ -6,7 +6,7 @@ using HPH.ParkRunChamps.Cli.Pipeline;
 
 namespace HPH.ParkRunChamps.Cli.Services;
 
-public class HphSpreadSheetAdapter {
+public class HphSpreadSheetAdapter : IHphSpreadSheetAdapter {
     public async Task<IEnumerable<ClubMember>> GetMembersList()
     {
         using var service = await GetSheetsService();
@@ -109,4 +109,12 @@ public class HphSpreadSheetAdapter {
         updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
         await updateRequest.ExecuteAsync();
     }
+}
+
+public interface IHphSpreadSheetAdapter {
+    Task<IEnumerable<ClubMember>> GetMembersList();
+    Task<string> GetParkRunOfTheMonth(int month);
+    Task<IEnumerable<ClubChampResult>> GetClubChampsForTheMonthAndGender(int month, string gender);
+    Task UpdateClubChampsWhmResult(ClubChampResult clubChampResult, string gender);
+    Task UpdateClubChampsMonthlyResult(ClubChampResult clubChampResult, string gender, int month);
 }
