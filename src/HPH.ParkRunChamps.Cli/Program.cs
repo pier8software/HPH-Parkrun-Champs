@@ -14,6 +14,7 @@ parkRunChampsPipeline.AddStep(new GetLatestParkRunInfoStep(hphBlogScraper));
 parkRunChampsPipeline.AddStep(new GetResultsStep(hphBlogScraper));
 parkRunChampsPipeline.AddStep(new GetMembersStep(googleSheetsAdapter));
 parkRunChampsPipeline.AddStep(new GetParkRunOfTheMonthStep(googleSheetsAdapter));
+parkRunChampsPipeline.AddStep(new GetClubChampsResultsStep(googleSheetsAdapter));
 parkRunChampsPipeline.AddStep(new UpdateClubChampsStep(googleSheetsAdapter));
 
 await parkRunChampsPipeline.Execute(parkRunChampsData, AnsiConsole.Console);

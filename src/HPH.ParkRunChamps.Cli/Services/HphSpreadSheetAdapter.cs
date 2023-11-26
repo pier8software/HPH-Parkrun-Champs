@@ -42,7 +42,9 @@ public class HphSpreadSheetAdapter {
 
         double TrimAndConvert(object value)
         {
-            return Convert.ToDouble(value.ToString().TrimEnd('%'));
+            var ageRange = value.ToString().TrimEnd('%');
+            ageRange = string.IsNullOrEmpty(ageRange) ? "0" : ageRange;
+            return Convert.ToDouble(ageRange);
         }
     }
 
@@ -103,6 +105,8 @@ public class HphSpreadSheetAdapter {
         };
         
         using var service = await GetSheetsService();
-        service.Spreadsheets.Values.Update(valueRange, "1pbyEGcux3ResvlU4bXG5zuF39sZ0mOhJmD2e48Jp3pc", range);
+        var updateRequest = service.Spreadsheets.Values.Update(valueRange, "1pbyEGcux3ResvlU4bXG5zuF39sZ0mOhJmD2e48Jp3pc", range);
+        updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+        await updateRequest.ExecuteAsync();
     }
 }

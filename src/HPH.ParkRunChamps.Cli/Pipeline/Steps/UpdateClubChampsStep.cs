@@ -15,16 +15,30 @@ internal class UpdateClubChampsStep(HphSpreadSheetAdapter hphSpreadSheetsAdapter
         {
             ctx.Status($"Updating {gender}s {WHM} results...");
             var whmParkRunResults = results.Where(x => x.ParkRun.Equals(WHM));
-            UpdateWhmResults(data, gender, newChamps, whmParkRunResults);
+            var updatedResults = await UpdateWhmResults(data, gender, newChamps, whmParkRunResults);
+            
             
             ctx.Status($"Updating {gender}s {data.ParkRunOfTheMonth} results...");
-            var parkRunOfTheMonthResults = results.Where(x => x.ParkRun.Equals(data.ParkRunOfTheMonth));
-            UpdateParkRunOfTheMonthResults(data, gender, newChamps, parkRunOfTheMonthResults);
+            var parkRunOfTheMonthResults = data.ParkRunOfTheMonth.Equals("Any!") 
+                ? results.Where(x=> !x.ParkRun.Equals(WHM))
+                : results.Where(x => x.ParkRun.Equals(data.ParkRunOfTheMonth));
+            updatedResults += await UpdateParkRunOfTheMonthResults(data, gender, newChamps, parkRunOfTheMonthResults);
+            console.MarkupLine("[green]Updated [bold]{0} {1}s[/] results[/]", updatedResults, gender);
+        }
+        
+        if (newChamps.Any())
+        {
+            console.MarkupLine("[red]New ParkRun Results found[/]");
+            foreach (var (name, parkRun, ageGrade) in newChamps)
+            {
+                console.MarkupLine("[grey]Name: [bold]{0}[/]\t\tParkRun: [bold]{1}[/]\t\tAgeGrade: [bold]{2}[/][/]", name, parkRun, ageGrade);
+            }
         }
     }
 
-    private void UpdateParkRunOfTheMonthResults(ParkRunChampsData data, string gender, List<ParkRunResult> newChamps, IEnumerable<ParkRunResult> parkRunOfTheMonthResults)
+    private async Task<int> UpdateParkRunOfTheMonthResults(ParkRunChampsData data, string gender, List<ParkRunResult> newChamps, IEnumerable<ParkRunResult> parkRunOfTheMonthResults)
     {
+        var noOfUpdatedResults = 0;
         foreach (var parkRunResult in parkRunOfTheMonthResults)
         {
             var clubChampResult = data.ClubChampResults[gender].FirstOrDefault(x => x.Name.Equals(parkRunResult.Name));
@@ -40,30 +54,34 @@ internal class UpdateClubChampsStep(HphSpreadSheetAdapter hphSpreadSheetsAdapter
                 {
                     MonthAgeGrade = parkRunResult.AgeGrade
                 };
-                hphSpreadSheetsAdapter.UpdateClubChampsMonthlyResult(clubChampResult, gender, data.LastParkRunDate.Month);
+                await hphSpreadSheetsAdapter.UpdateClubChampsMonthlyResult(clubChampResult, gender, data.LastParkRunDate.Month);
+                noOfUpdatedResults++;
             }
         }
+
+        return noOfUpdatedResults;
     }
 
-    private void UpdateWhmResults(ParkRunChampsData data, string gender, List<ParkRunResult> newChamps, IEnumerable<ParkRunResult> whmParkRunResults)
+    private async Task<int> UpdateWhmResults(ParkRunChampsData data, string gender, List<ParkRunResult> newChamps, IEnumerable<ParkRunResult> whmParkRunResults)
     {
+        var noOfUpdatedResults = 0;
         foreach (var parkRunResult in whmParkRunResults)
         {
             var clubChampResult = data.ClubChampResults[gender].FirstOrDefault(x => x.Name.Equals(parkRunResult.Name));
             if (clubChampResult is null)
             {
                 newChamps.Add(parkRunResult);
-                continue;
             }
-
-            if (parkRunResult.AgeGrade > clubChampResult.WhmAgeGrade)
+            else if (parkRunResult.AgeGrade > clubChampResult.WhmAgeGrade)
             {
                 clubChampResult = clubChampResult with
                 {
                     WhmAgeGrade = parkRunResult.AgeGrade
                 };
-                hphSpreadSheetsAdapter.UpdateClubChampsWhmResult(clubChampResult, gender);
+                await hphSpreadSheetsAdapter.UpdateClubChampsWhmResult(clubChampResult, gender);
+                noOfUpdatedResults++;
             }
         }
+        return noOfUpdatedResults;
     }
 }
