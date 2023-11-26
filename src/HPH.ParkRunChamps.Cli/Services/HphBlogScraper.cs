@@ -3,7 +3,7 @@ using AngleSharp;
 using AngleSharp.Dom;
 using HPH.ParkRunChamps.Cli.Pipeline;
 
-namespace HPH.ParkRunChamps.Cli;
+namespace HPH.ParkRunChamps.Cli.Services;
 
 public interface IHphBlogScraper {
     Task<(DateOnly date, Uri link)> GetLatestParkRunInfo();
@@ -42,13 +42,21 @@ public class HphBlogScraper : IHphBlogScraper {
         };
     }
 
-    private static IEnumerable<ParkRunResult> ParseResults(IElement table)
+    private IEnumerable<ParkRunResult> ParseResults(IElement table)
     {
         var rows = table.QuerySelectorAll("tbody tr:not(:first-child)");
         foreach (var row in rows)
         {
             var cells = row.QuerySelectorAll("td");
-            yield return new ParkRunResult(cells[0].TextContent, cells[1].TextContent, cells[4].TextContent);
+            var name = cells[0].TextContent;
+            var parkRun = cells[1].TextContent;
+            var ageGrade = TrimAndConvert(cells[4].TextContent);
+            yield return new ParkRunResult(name, parkRun, ageGrade);
         }
+    }
+    
+    private double TrimAndConvert(string value)
+    {
+        return Convert.ToDouble(value.TrimEnd('%'));
     }
 }

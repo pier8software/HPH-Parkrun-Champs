@@ -1,4 +1,5 @@
 using HPH.ParkRunChamps.Cli.Pipeline;
+using HPH.ParkRunChamps.Cli.Pipeline.Steps;
 using HPH.ParkRunChamps.Cli.Tests.TestClasses;
 using Spectre.Console.Testing;
 

@@ -1,13 +1,14 @@
+using HPH.ParkRunChamps.Cli.Services;
 using Spectre.Console;
 
-namespace HPH.ParkRunChamps.Cli.Pipeline;
+namespace HPH.ParkRunChamps.Cli.Pipeline.Steps;
 
 public class GetResultsStep(IHphBlogScraper scraper) : IPipelineStep {
     public async Task ExecuteStep(ParkRunChampsData data, IAnsiConsole console, StatusContext ctx)
     {
-        ctx.Status("Fetching Results...");
+        ctx.Status("Fetching ParkRun Results...");
         var results = await scraper.GetParkRunResults(data.ResultsLink);
-        data.Results = results;
-        console.MarkupLineInterpolated($"[green]Received Results for [bold]{results.Values.SelectMany(x => x).Count()}[/] Park Runners[/]");
+        data.ParkRunResults = results;
+        console.MarkupLineInterpolated($"[green]Received ParkRun Results for [bold]{results.Values.SelectMany(x => x).Count()}[/] Park Runners[/]");
     }
 }
