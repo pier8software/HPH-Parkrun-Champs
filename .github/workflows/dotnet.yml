@@ -29,10 +29,10 @@ jobs:
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1
       with:
-        files: '${{ github.workspace }}/src/HPH.ParkRunChamps.Cli/client_secrets.json'
+        files: '${{ github.workspace }}/src/HPH.ParkRunChamps.Cli/appsettings.json'
       env:
-        installed.client_id: ${{ secrets.g_sheets_client_id }}
-        installed.client_secret: ${{ secrets.g_sheets_client_secret }}
+        installed.clientId: ${{ secrets.g_sheets_client_id }}
+        installed.clientSecret: ${{ secrets.g_sheets_client_secret }}
     
     - name: Restore dependencies
       run: dotnet restore -r win-x64
