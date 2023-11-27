@@ -26,10 +26,10 @@ jobs:
       with:
         dotnet-version: 8.0.x
         
-    - name: App Settings Variable Substitution
-      uses: microsoft/variable-substitution@v1
+    - name: Add Secrets to Configuration
+      uses: keeroll/variable-substitution@v2.0.2
       with:
-        files: '${{env.DOTNET_ROOT}}\HPH.ParkRunChamps.Cli\appsettings.json'
+        files: '${{ github.workspace }}\src\HPH.ParkRunChamps.Cli\appsettings.json'
       env:
         installed.clientId: ${{ secrets.g_sheets_client_id }}
         installed.clientSecret: ${{ secrets.g_sheets_client_secret }}
