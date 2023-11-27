@@ -1,4 +1,6 @@
-﻿using Google.Apis.Auth.OAuth2;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
@@ -6,11 +8,21 @@ using HPH.ParkRunChamps.Cli.Pipeline;
 
 namespace HPH.ParkRunChamps.Cli.Services;
 
-public class HphSpreadSheetAdapter : IHphSpreadSheetAdapter {
+public interface IHphSpreadSheetAdapter {
+    Task<IEnumerable<ClubMember>> GetMembersList();
+    Task<string> GetParkRunOfTheMonth(int month);
+    Task<IEnumerable<ClubChampResult>> GetClubChampsForTheMonthAndGender(int month, string gender);
+    Task UpdateClubChampsWhmResult(ClubChampResult clubChampResult, string gender);
+    Task UpdateClubChampsMonthlyResult(ClubChampResult clubChampResult, string gender, int month);
+}
+
+public class HphSpreadSheetAdapter(HphParkRunChampsConfiguration config) : IHphSpreadSheetAdapter {
+    private readonly HphParkRunChampsConfiguration _config = config;
+
     public async Task<IEnumerable<ClubMember>> GetMembersList()
     {
         using var service = await GetSheetsService();
-        var getRequest = service.Spreadsheets.Values.Get("1G3iQNkVYrtL36UnHYiZFeLpdtmzcTioJGkdvymXSYY0", "A:E");
+        var getRequest = service.Spreadsheets.Values.Get(_config.MembersListSheetId, "A:E");
         var data = await getRequest.ExecuteAsync();
         return data.Values.Select(row => new ClubMember(row[0].ToString(), row[1].ToString(), row[3].ToString()));
     }
@@ -19,7 +31,7 @@ public class HphSpreadSheetAdapter : IHphSpreadSheetAdapter {
     {
         var (colChar, _) = MapMonthToColumnIndex(month);
         using var service = await GetSheetsService();
-        var getRequest = service.Spreadsheets.Values.Get("1pbyEGcux3ResvlU4bXG5zuF39sZ0mOhJmD2e48Jp3pc", $"Womens parkrun!{colChar}2");
+        var getRequest = service.Spreadsheets.Values.Get(_config.ParkRunChampsSheetId, $"Womens parkrun!{colChar}2");
         var valueRange = await getRequest.ExecuteAsync();
         return valueRange.Values[0][0].ToString();
     }
@@ -28,7 +40,7 @@ public class HphSpreadSheetAdapter : IHphSpreadSheetAdapter {
     {
         var (_, colIdx) = MapMonthToColumnIndex(month);
         using var service = await GetSheetsService();
-        var getRequest = service.Spreadsheets.Values.Get("1pbyEGcux3ResvlU4bXG5zuF39sZ0mOhJmD2e48Jp3pc", $"{gender}s parkrun!A3:AA");
+        var getRequest = service.Spreadsheets.Values.Get(_config.ParkRunChampsSheetId, $"{gender}s parkrun!A3:AA");
         var data = await getRequest.ExecuteAsync();
 
         var results = new List<ClubChampResult>();
@@ -51,22 +63,25 @@ public class HphSpreadSheetAdapter : IHphSpreadSheetAdapter {
     public async Task UpdateClubChampsWhmResult(ClubChampResult clubChampResult, string gender)
     {
         var range = $"{gender}s parkrun!D{clubChampResult.RowIndex}";
-        await UpdateClubChampResult(clubChampResult.WhmAgeGrade, range);
+        var ageGrade = $"{clubChampResult.WhmAgeGrade}%";
+        await UpdateClubChampResult(ageGrade, range);
     }
 
     public async Task UpdateClubChampsMonthlyResult(ClubChampResult clubChampResult, string gender, int month)
     {
         var (colChar, _) = MapMonthToColumnIndex(month);
         var range = $"{gender}s parkrun!{colChar}{clubChampResult.RowIndex}";
-        await UpdateClubChampResult(clubChampResult.MonthAgeGrade, range);
+        var ageGrade = $"{clubChampResult.MonthAgeGrade}%";
+        await UpdateClubChampResult(ageGrade, range);
     }
 
     private async Task<SheetsService> GetSheetsService()
     {
         var scopes = new[] { SheetsService.Scope.Spreadsheets };
-        using var stream = new FileStream("client_secrets.json", FileMode.Open, FileAccess.Read);
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(_config);
+        await using Stream stream = new MemoryStream(bytes);
         var userCredential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-            GoogleClientSecrets.Load(stream).Secrets,
+            (await GoogleClientSecrets.FromStreamAsync(stream)).Secrets,
             scopes,
             "user", CancellationToken.None);
 
@@ -96,7 +111,7 @@ public class HphSpreadSheetAdapter : IHphSpreadSheetAdapter {
         };
     }
 
-    private async Task UpdateClubChampResult(double ageGrade, string range)
+    private async Task UpdateClubChampResult(string ageGrade, string range)
     {
         var valueRange = new ValueRange
         {
@@ -105,16 +120,8 @@ public class HphSpreadSheetAdapter : IHphSpreadSheetAdapter {
         };
         
         using var service = await GetSheetsService();
-        var updateRequest = service.Spreadsheets.Values.Update(valueRange, "1pbyEGcux3ResvlU4bXG5zuF39sZ0mOhJmD2e48Jp3pc", range);
+        var updateRequest = service.Spreadsheets.Values.Update(valueRange, _config.ParkRunChampsSheetId, range);
         updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
         await updateRequest.ExecuteAsync();
     }
-}
-
-public interface IHphSpreadSheetAdapter {
-    Task<IEnumerable<ClubMember>> GetMembersList();
-    Task<string> GetParkRunOfTheMonth(int month);
-    Task<IEnumerable<ClubChampResult>> GetClubChampsForTheMonthAndGender(int month, string gender);
-    Task UpdateClubChampsWhmResult(ClubChampResult clubChampResult, string gender);
-    Task UpdateClubChampsMonthlyResult(ClubChampResult clubChampResult, string gender, int month);
 }
