@@ -3,11 +3,13 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
-        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <ApplicationIcon>HPH-Icon.ico</ApplicationIcon>
-        <PublisherName>Pier 8 Software Ltd.</PublisherName>
+        <PublisherName>Pier 8 Software Ltd</PublisherName>
         <UserSecretsId>8b53cf25-9eb4-45b6-9001-05cfa0bd5383</UserSecretsId>
     </PropertyGroup>
 

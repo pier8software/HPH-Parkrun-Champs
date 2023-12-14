@@ -33,6 +33,8 @@ jobs:
       env:
         installed.clientId: ${{ secrets.g_sheets_client_id }}
         installed.clientSecret: ${{ secrets.g_sheets_client_secret }}
+        membersListSheetId: ${{ secrets.members_list_sheet_id }}
+        parkRunChampsSheetId: ${{ secrets.park_run_champs_sheet_id }}
     
     - name: Restore dependencies
       run: dotnet restore -r win-x64
@@ -53,7 +55,7 @@ jobs:
     
     - name: Publish
       if: success()
-      run: dotnet publish .\src\HPH.ParkRunChamps.Cli\ --no-build -r win-x64 --self-contained true -c Release --version-suffix ${{ env.SHORT_COMMIT_SHA }} -o ${{ github.workspace }}\publish
+      run: dotnet publish .\src\HPH.ParkRunChamps.Cli\ --no-build -r win-x64 -c Release --version-suffix ${{ env.SHORT_COMMIT_SHA }} -o ${{ github.workspace }}\publish
 
     - name: Zip artifacts
       uses: vimtor/action-zip@v1.1
