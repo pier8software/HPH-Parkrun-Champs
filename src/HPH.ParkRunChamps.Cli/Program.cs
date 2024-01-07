@@ -7,7 +7,6 @@ using Spectre.Console;
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
-    .AddUserSecrets<Program>()
     .Build();
 
 var parkRunChampsConfiguration = configuration.Get<HphParkRunChampsConfiguration>();

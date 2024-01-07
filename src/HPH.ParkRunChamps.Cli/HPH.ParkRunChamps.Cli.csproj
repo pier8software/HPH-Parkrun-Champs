@@ -10,14 +10,14 @@
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <ApplicationIcon>HPH-Icon.ico</ApplicationIcon>
         <PublisherName>Pier 8 Software Ltd</PublisherName>
-        <UserSecretsId>8b53cf25-9eb4-45b6-9001-05cfa0bd5383</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="AngleSharp" Version="1.0.7" />
       <PackageReference Include="Google.Apis.Sheets.v4" Version="1.64.0.3148" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
       <PackageReference Include="Spectre.Console" Version="0.47.0" />
     </ItemGroup>
